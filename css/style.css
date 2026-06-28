@@ -1,0 +1,456 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+:root{
+    --primary:#C8A27C;
+    --primary-dark:#B58E68;
+    --secondary:#EFD7D1;
+    --background:#FAF7F2;
+    --white:#FFFFFF;
+    --title:#5B4636;
+    --text:#6B6B6B;
+    --transition:.35s ease;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'Poppins',sans-serif;
+    background:var(--background);
+    color:var(--text);
+    overflow-x:hidden;
+}
+
+h1,h2,h3,h4,h5{
+    font-family:'Playfair Display',serif;
+    color:var(--title);
+}
+
+a{
+    text-decoration:none;
+}
+
+section{
+    padding:110px 0;
+}
+
+img{
+    max-width:100%;
+    display:block;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar{
+    padding:20px 0;
+    background:rgba(250,247,242,.85);
+    backdrop-filter:blur(12px);
+    transition:.4s;
+}
+
+.navbar-brand{
+    font-size:2rem;
+    font-weight:700;
+    color:var(--title);
+}
+
+.navbar-brand:hover{
+    color:var(--primary);
+}
+
+.nav-link{
+    color:var(--text);
+    margin:0 12px;
+    font-weight:500;
+    position:relative;
+    transition:var(--transition);
+}
+
+.nav-link::after{
+    content:'';
+    position:absolute;
+    width:0;
+    height:2px;
+    left:0;
+    bottom:-6px;
+    background:var(--primary);
+    transition:.3s;
+}
+
+.nav-link:hover{
+    color:var(--primary);
+}
+
+.nav-link:hover::after{
+    width:100%;
+}
+
+.btn-outline-dark{
+    border-radius:50px;
+    padding:10px 28px;
+    border:2px solid var(--primary);
+    color:var(--primary);
+    transition:var(--transition);
+}
+
+.btn-outline-dark:hover{
+    background:var(--primary);
+    border-color:var(--primary);
+    color:#fff;
+}
+
+/* ================= HERO ================= */
+
+.hero{
+
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    position:relative;
+
+}
+
+.hero-buttons{
+    margin-top:35px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+
+}
+
+.hero-info h3{
+
+    color:var(--primary);
+    font-size:2rem;
+    margin-bottom:5px;
+
+}
+
+.hero-info p{
+
+    font-size:.9rem;
+    margin:0;
+
+}
+
+.hero-image{
+
+    width:85%;
+
+}
+/* ================= BOTÕES ================= */
+
+.btn-gold{
+    background:var(--primary);
+    color:#fff;
+    border:none;
+    border-radius:50px;
+    padding:15px 35px;
+    transition:var(--transition);
+    box-shadow:0 12px 25px rgba(200,162,124,.25);
+}
+
+.btn-gold:hover{
+    background:var(--primary-dark);
+    color:#fff;
+    transform:translateY(-4px);
+}
+
+.btn-light{
+    border-radius:50px;
+    padding:15px 35px;
+    border:2px solid #fff;
+    transition:var(--transition);
+}
+
+.btn-light:hover{
+    transform:translateY(-4px);
+}
+
+/* ================= SOBRE ================= */
+
+#sobre{
+    background:#fff;
+}
+
+.section-subtitle{
+    color:var(--primary);
+    font-size:.85rem;
+    letter-spacing:3px;
+    font-weight:600;
+}
+
+#sobre h2{
+    font-size:2.8rem;
+    line-height:1.3;
+}
+
+#sobre p{
+    line-height:1.9;
+    margin-bottom:20px;
+}
+
+
+#sobre h3{
+    color:var(--primary);
+    font-size:2rem;
+    margin-bottom:5px;
+}
+
+/* ================= ANIMAÇÃO ================= */
+
+@keyframes float{
+    0%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-20px);
+    }
+    100%{
+        transform:translateY(0);
+    }
+}
+/* ================= SERVIÇOS ================= */
+
+#servicos{
+
+    background:#fff;
+
+}
+
+.section-title{
+
+    max-width:700px;
+    margin:auto;
+
+}
+
+.section-title p{
+
+    margin-top:20px;
+    color:var(--text);
+
+}
+
+.service-card{
+
+    position:relative;
+    border-radius:25px;
+    overflow:hidden;
+    background:#fff;
+    transition:.4s;
+    box-shadow:0 20px 50px rgba(0,0,0,.08);
+
+}
+
+.service-card:hover{
+
+    transform:translateY(-12px);
+
+}
+
+.service-image{
+
+    overflow:hidden;
+
+}
+
+.service-image img{
+
+    width:100%;
+    height:auto;
+    object-fit:block;
+    transition:.6s;
+
+}
+
+.service-card:hover img{
+
+    transform:scale(1.08);
+
+}
+
+.service-content{
+
+    padding:30px;
+
+}
+
+.service-category{
+
+    color:var(--primary);
+    font-weight:600;
+    letter-spacing:2px;
+    font-size:.8rem;
+
+}
+
+.service-content h3{
+    margin:15px 0;
+
+}
+
+.service-content p{
+
+    line-height:1.8;
+}
+
+.service-content ul{
+
+    list-style:none;
+    padding:0;
+    margin:25px 0;
+}
+
+.service-content li{
+
+    margin-bottom:12px;
+
+}
+
+.service-footer{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+.badge-premium{
+
+    position:absolute;
+    top:20px;
+    right:20px;
+    background:var(--primary);
+    color:#fff;
+    padding:10px 18px;
+    border-radius:50px;
+    z-index:20;
+    font-size:.75rem;
+    font-weight:600;
+
+}
+
+.contatos{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-top:20px;
+}
+/* ================= SCROLLBAR ================= */
+
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#f3f3f3;
+}
+
+::-webkit-scrollbar-thumb{
+    background:var(--primary);
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:var(--primary-dark);
+}
+
+/* ================= RESPONSIVO ================= */
+
+/* --- TABLETS E DISPOSITIVOS MÉDIOS (Até 992px) --- */
+@media (max-width: 992px) {
+    section {
+        padding: 80px 0;
+    }
+
+    .hero {
+        text-align: center;
+        padding-top: 120px;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+    }
+
+    .hero p {
+        margin: 0 auto; /* Garante centralização horizontal */
+        max-width: 90%; /* Evita que o texto encoste nas bordas */
+    }
+
+    .hero-image {
+        margin: 60px auto 0 auto; /* Centraliza a imagem */
+        width: 75%;
+        display: block;
+    }
+
+    .navbar-nav {
+        margin: 30px 0;
+        text-align: center;
+    }
+
+    .btn-outline-dark {
+        width: 100%;
+    }
+}
+
+/* --- CELULARES EM MODO PAISAGEM / TELAS PEQUENAS (Até 768px) --- */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.4rem;
+    }
+
+    #sobre h2,
+    #servicos h2,
+    #galeria h2,
+    .cta h2 {
+        font-size: 2rem;
+    }
+
+    .service-card img {
+        object-fit: cover; /* Evita que a imagem fique esticada ou distorcida */
+    }
+
+    .gallery {
+        height: 220px;
+    }
+
+    .hero-image {
+        width: 100%;
+    }
+
+    .btn-gold,
+    .btn-light {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.6rem;
+    }
+
+    .hero {
+        min-height: auto;
+        padding-top: 140px;
+        padding-bottom: 80px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        line-height: 1.2; /* Melhora o espaçamento se o título quebrar em 3 linhas */
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section-subtitle {
+        font-size: 0.75rem;
+    }
+}
