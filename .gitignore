@@ -21,15 +21,6 @@ env/
 .env.local
 .env.production
 
-# ── Uploads de imagens enviadas pela admin ───────────────
-# Mantém a pasta img/ mas ignora fotos enviadas em produção
-# (use Cloudinary ou similar em produção)
-# img/*.png
-# img/*.jpg
-# img/*.jpeg
-# img/*.webp
-# img/*.gif
-
 # ── Sistema operacional ──────────────────────────────────
 .DS_Store
 Thumbs.db
