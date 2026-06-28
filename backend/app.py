@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.secret_key = "chave-secreta-troque-isso"
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # limite de 5MB por upload
 
-CORS(app, supports_credentials=True origins=["https://6a4170a849ae3b9f848945a0--unrivaled-fenglisu-abf08d.netlify.app/"])
+CORS(app, supports_credentials=True, origins=["https://6a4170a849ae3b9f848945a0--unrivaled-fenglisu-abf08d.netlify.app"])
 
 # Serve a pasta img/ que fica um nível acima do backend/
 IMG_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "img"))
