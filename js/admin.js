@@ -1,5 +1,5 @@
 const API = "https://danielemakeup.onrender.com/api";
-const IMG_BASE = "http://127.0.0.1:5000";
+const IMG_BASE = "https://danielemakeup.onrender.com/api";
 let servicoEditandoId  = null;
 let imagemUpladada     = null; // caminho retornado pelo backend após upload
 
