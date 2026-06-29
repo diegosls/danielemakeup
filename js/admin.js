@@ -1,11 +1,8 @@
-// ─── Configurações de URLs corrigidas ──────────────────────────────────────────
 const API = "https://danielemakeup.onrender.com/api";
-// Mudança aqui: O link das imagens agora aponta para a rota pública de fotos do Flask
 const IMG_BASE = "https://danielemakeup.onrender.com"; 
 
 let servicoEditandoId  = null;
-let imagemUpladada     = null; // caminho retornado pelo backend após upload
-
+let imagemUpladada     = null;
 // ─── Inicialização ────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", async () => {
     const { logado } = await (await fetch(`${API}/admin/check`, { credentials: "include" })).json();
@@ -124,7 +121,6 @@ async function processarArquivo(arquivo) {
     form.append("imagem", arquivo);
 
     try {
-        // ALTERADO: Adicionado "/api" no link do fetch para casar com o Python
         const res  = await fetch(`${API}/admin/upload`, {
             method: "POST",
             credentials: "include",
@@ -207,5 +203,49 @@ function adicionarItemBeneficio(texto) {
     const li = document.createElement("li");
     li.dataset.valor = texto;
     li.innerHTML = `<span>✔ ${texto}</span><button onclick="this.parentElement.remove()" title="Remover">×</button>`;
-    document.getElementById("lista-beneficios").appendChild(li); // Fechamento correto da função incompleta
+    document.getElementById("lista-beneficios").appendChild(li);
+}
+
+// ─── Salvar Novo / Editar Serviço ──────────────────────────────────────────────
+async function salvarServico(e) {
+    if (e) e.preventDefault();
+
+    const dados = {
+        titulo: document.getElementById("f-titulo").value.trim(),
+        descricao: document.getElementById("f-descricao").value.trim(),
+        categoria: document.getElementById("f-categoria").value.trim(),
+        tempo: document.getElementById("f-tempo").value.trim(),
+        mensagem: document.getElementById("f-mensagem").value.trim(),
+        destaque: document.getElementById("f-destaque").checked,
+        imagem: document.getElementById("f-imagem-path").value,
+        beneficios: Array.from(document.querySelectorAll("#lista-beneficios li")).map(li => li.dataset.valor)
+    };
+
+    if (!dados.titulo) {
+        alert("O título do serviço é obrigatório.");
+        return;
+    }
+
+    const url = servicoEditandoId ? `${API}/admin/services/${servicoEditandoId}` : `${API}/admin/services`;
+    const metodo = servicoEditandoId ? "PUT" : "POST";
+
+    try {
+        const res = await fetch(url, {
+            method: metodo,
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(dados)
+        });
+
+        if (res.ok) {
+            alert(servicoEditandoId ? "Serviço atualizado com sucesso!" : "Serviço criado com sucesso!");
+            fecharModal();
+            carregarServicos();
+        } else {
+            const dado = await res.json();
+            alert(`Erro ao salvar: ${dado.erro || 'Falha interna'}`);
+        }
+    } catch (e) {
+        alert("Falha na conexão com o servidor. Tente novamente.");
+    }
 }
