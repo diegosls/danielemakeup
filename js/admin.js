@@ -249,3 +249,43 @@ async function salvarServico(e) {
         alert("Falha na conexão com o servidor. Tente novamente.");
     }
 }
+// ─── Deletar Serviço ──────────────────────────────────────────────────────────
+async function deletarServico(id, titulo) {
+
+    const confirmar = confirm(`Deseja realmente excluir o serviço "${titulo}"?`);
+
+    if (!confirmar) {
+        return;
+    }
+
+    try {
+
+        const res = await fetch(`${API}/admin/services/${id}`, {
+            method: "DELETE",
+            credentials: "include"
+        });
+
+        const dados = await res.json();
+
+        if (res.ok) {
+
+            alert("Serviço excluído com sucesso!");
+
+            // Atualiza a listagem
+            carregarServicos();
+
+        } else {
+
+            alert(dados.erro || "Não foi possível excluir o serviço.");
+
+        }
+
+    } catch (erro) {
+
+        console.error("Erro ao excluir:", erro);
+
+        alert("Erro de conexão com o servidor.");
+
+    }
+
+}
