@@ -6,18 +6,21 @@ import os
 
 app = Flask(__name__)
 app.secret_key = "chave-secreta-troque-isso"
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024  # limite de 5MB por upload
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024 
+app.config['SESSION_COOKIE_SAMESITE'] = 'None'
+app.config['SESSION_COOKIE_SECURE'] = True
 
 CORS(app, supports_credentials=True, origins=["https://danimakeup.netlify.app"])
 
-# Serve a pasta img/ que fica um nível acima do backend/
-IMG_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "img"))
+if os.path.exists("/app/img"):
+    IMG_FOLDER = "/app/img"
+else:
+    IMG_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "img"))
 
 @app.route("/img/<path:filename>")
 def servir_imagem(filename):
     return send_from_directory(IMG_FOLDER, filename)
 
-init_db()
 register_routes(app)
 
 if __name__ == "__main__":
