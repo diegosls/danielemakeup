@@ -1,4 +1,4 @@
-from flask import jsonify, request, session, current_app, send_from_directory
+from flask import jsonify, request, session
 import json
 import os
 from werkzeug.utils import secure_filename
@@ -6,14 +6,20 @@ from database import get_db
 
 EXTENSOES_PERMITIDAS = {"png", "jpg", "jpeg", "webp", "gif"}
 
+
 def extensao_permitida(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in EXTENSOES_PERMITIDAS
+    )
+
 
 def row_para_dict(row):
-    d = dict(row)
-    d["destaque"] = bool(d["destaque"])
-    d["beneficios"] = json.loads(d["beneficios"] or "[]")
-    return d
+    dados = dict(row)
+    dados["destaque"] = bool(dados["destaque"])
+    dados["beneficios"] = json.loads(dados["beneficios"] or "[]")
+    return dados
+
 
 def admin_logado():
     return session.get("admin") is True
@@ -21,45 +27,77 @@ def admin_logado():
 
 def register_routes(app):
 
-    # ── Pública ──
+    # ==========================
+    # SERVIÇOS PÚBLICOS
+    # ==========================
+
     @app.route("/api/services", methods=["GET"])
     def listar_servicos():
         conn = get_db()
-        rows = conn.execute("SELECT * FROM services").fetchall()
+        rows = conn.execute(
+            "SELECT * FROM services ORDER BY id DESC"
+        ).fetchall()
         conn.close()
-        return jsonify({"services": [row_para_dict(r) for r in rows]})
 
-    # ── Auth ──
+        return jsonify({
+            "services": [row_para_dict(r) for r in rows]
+        })
+
+    # ==========================
+    # LOGIN
+    # ==========================
+
     @app.route("/api/admin/login", methods=["POST"])
     def login():
+
         dados = request.get_json()
+
         username = dados.get("username", "").strip()
         password = dados.get("password", "").strip()
 
         conn = get_db()
+
         admin = conn.execute(
-            "SELECT * FROM admin WHERE username = ? AND password = ?",
+            """
+            SELECT *
+            FROM admin
+            WHERE username = ?
+            AND password = ?
+            """,
             (username, password)
         ).fetchone()
+
         conn.close()
 
         if admin:
             session["admin"] = True
             return jsonify({"ok": True})
-        return jsonify({"ok": False, "erro": "Usuário ou senha inválidos"}), 401
+
+        return jsonify({
+            "ok": False,
+            "erro": "Usuário ou senha inválidos."
+        }), 401
+
 
     @app.route("/api/admin/logout", methods=["POST"])
     def logout():
         session.clear()
         return jsonify({"ok": True})
 
+
     @app.route("/api/admin/check", methods=["GET"])
     def check_auth():
-        return jsonify({"logado": admin_logado()})
+        return jsonify({
+            "logado": admin_logado()
+        })
 
-    # ── Upload de imagem ──
+    # ==========================
+    # UPLOAD
+    # ==========================
+
     @app.route("/api/admin/upload", methods=["POST"])
     def upload_imagem():
+
         if not admin_logado():
             return jsonify({"erro": "Não autorizado"}), 401
 
@@ -69,76 +107,156 @@ def register_routes(app):
         arquivo = request.files["imagem"]
 
         if arquivo.filename == "":
-            return jsonify({"erro": "Nome de arquivo vazio"}), 400
+            return jsonify({"erro": "Arquivo inválido"}), 400
 
         if not extensao_permitida(arquivo.filename):
-            return jsonify({"erro": "Formato não permitido. Use PNG, JPG, JPEG, WEBP ou GIF"}), 400
+            return jsonify({"erro": "Formato não permitido"}), 400
 
         filename = secure_filename(arquivo.filename)
-        
-        # ALTERADO: Força salvar no caminho fixo do Disco do Render
-        pasta_img = "/app/img"
-        os.makedirs(pasta_img, exist_ok=True)
 
-        caminho = os.path.join(pasta_img, filename)
-        arquivo.save(caminho)
+        if os.path.exists("/app/img"):
+            pasta = "/app/img"
+        else:
+            pasta = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "..", "img")
+            )
 
-        return jsonify({"ok": True, "imagem": f"img/{filename}"})
+        os.makedirs(pasta, exist_ok=True)
 
-    # ── CRUD protegido ──
+        arquivo.save(os.path.join(pasta, filename))
+
+        return jsonify({
+            "ok": True,
+            "imagem": f"img/{filename}"
+        })
+
+    # ==========================
+    # CRIAR SERVIÇO
+    # ==========================
+
     @app.route("/api/admin/services", methods=["POST"])
     def criar_servico():
+
         if not admin_logado():
             return jsonify({"erro": "Não autorizado"}), 401
 
         d = request.get_json()
+
         conn = get_db()
-        conn.execute("""
-            INSERT INTO services (titulo, descricao, imagem, mensagem, tempo, categoria, destaque, beneficios)
+
+        cursor = conn.execute("""
+            INSERT INTO services (
+                titulo,
+                descricao,
+                imagem,
+                mensagem,
+                tempo,
+                categoria,
+                destaque,
+                beneficios
+            )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-            d.get("titulo", ""), d.get("descricao", ""), d.get("imagem", ""),
-            d.get("mensagem", ""), d.get("tempo", ""), d.get("categoria", ""),
+            d.get("titulo", ""),
+            d.get("descricao", ""),
+            d.get("imagem", ""),
+            d.get("mensagem", ""),
+            d.get("tempo", ""),
+            d.get("categoria", ""),
             1 if d.get("destaque") else 0,
             json.dumps(d.get("beneficios", []), ensure_ascii=False)
         ))
+
         conn.commit()
+
+        novo_id = cursor.lastrowid
+
         conn.close()
-        return jsonify({"ok": True}), 201
+
+        return jsonify({
+            "ok": True,
+            "id": novo_id
+        }), 201
+
+    # ==========================
+    # EDITAR
+    # ==========================
 
     @app.route("/api/admin/services/<int:id>", methods=["PUT"])
     def editar_servico(id):
+
         if not admin_logado():
             return jsonify({"erro": "Não autorizado"}), 401
 
         d = request.get_json()
+
         conn = get_db()
-        conn.execute("""
+
+        cursor = conn.execute("""
             UPDATE services
-            SET titulo=?, descricao=?, imagem=?, mensagem=?, tempo=?, categoria=?, destaque=?, beneficios=?
+            SET
+                titulo=?,
+                descricao=?,
+                imagem=?,
+                mensagem=?,
+                tempo=?,
+                categoria=?,
+                destaque=?,
+                beneficios=?
             WHERE id=?
         """, (
-            d.get("titulo", ""), d.get("descricao", ""), d.get("imagem", ""),
-            d.get("mensagem", ""), d.get("tempo", ""), d.get("categoria", ""),
+            d.get("titulo", ""),
+            d.get("descricao", ""),
+            d.get("imagem", ""),
+            d.get("mensagem", ""),
+            d.get("tempo", ""),
+            d.get("categoria", ""),
             1 if d.get("destaque") else 0,
             json.dumps(d.get("beneficios", []), ensure_ascii=False),
             id
         ))
+
         conn.commit()
+
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({
+                "erro": "Serviço não encontrado."
+            }), 404
+
         conn.close()
-        return jsonify({"ok": True})
+
+        return jsonify({
+            "ok": True
+        })
+
+    # ==========================
+    # EXCLUIR
+    # ==========================
 
     @app.route("/api/admin/services/<int:id>", methods=["DELETE"])
     def deletar_servico(id):
+
         if not admin_logado():
             return jsonify({"erro": "Não autorizado"}), 401
 
         conn = get_db()
-        conn.execute("DELETE FROM services WHERE id = ?", (id,))
-        conn.commit()
-        conn.close()
-        return jsonify({"ok": True})
 
-    @app.route("/img/<path:filename>", methods=["GET"])
-    def mostrar_foto_pro_cliente(filename):
-        return send_from_directory("/app/img", filename)
+        cursor = conn.execute(
+            "DELETE FROM services WHERE id=?",
+            (id,)
+        )
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            conn.close()
+            return jsonify({
+                "erro": "Serviço não encontrado."
+            }), 404
+
+        conn.close()
+
+        return jsonify({
+            "ok": True
+        })
