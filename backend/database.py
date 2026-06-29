@@ -7,7 +7,11 @@ import os
 sys.path.insert(0, os.path.dirname(__file__))
 from data import services as services_iniciais
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
+# ALTERADO: Em produção (Render), salva no disco persistente. Localmente, usa a pasta atual.
+if os.path.exists("/app/img"):
+    DB_PATH = "/app/img/database.db"
+else:
+    DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
