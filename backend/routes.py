@@ -1,4 +1,4 @@
-from flask import jsonify, request, session, current_app
+from flask import jsonify, request, session, current_app, send_from_directory
 import json
 import os
 from werkzeug.utils import secure_filename
@@ -75,8 +75,9 @@ def register_routes(app):
             return jsonify({"erro": "Formato não permitido. Use PNG, JPG, JPEG, WEBP ou GIF"}), 400
 
         filename = secure_filename(arquivo.filename)
-        pasta_img = os.path.join(current_app.root_path, "..", "img")
-        pasta_img = os.path.abspath(pasta_img)
+        
+        # ALTERADO: Força salvar no caminho fixo do Disco do Render
+        pasta_img = "/app/img"
         os.makedirs(pasta_img, exist_ok=True)
 
         caminho = os.path.join(pasta_img, filename)
@@ -137,3 +138,7 @@ def register_routes(app):
         conn.commit()
         conn.close()
         return jsonify({"ok": True})
+
+    @app.route("/img/<path:filename>", methods=["GET"])
+    def mostrar_foto_pro_cliente(filename):
+        return send_from_directory("/app/img", filename)
