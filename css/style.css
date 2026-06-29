@@ -454,3 +454,120 @@ img{
         font-size: 0.75rem;
     }
 }
+/* ================= CONTATO ================= */
+
+.secao-contato {
+    background: var(--background);
+}
+
+.secao-contato h2 {
+    font-size: 2.4rem;
+}
+
+.secao-contato p {
+    color: var(--text);
+}
+
+.contato-botoes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.contato-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 36px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: var(--transition);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.contato-btn i {
+    font-size: 1.3rem;
+}
+
+.contato-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.14);
+}
+
+/* WhatsApp */
+.contato-whatsapp {
+    background: var(--primary);
+    color: #fff;
+}
+
+.contato-whatsapp:hover {
+    background: var(--primary-dark);
+    color: #fff;
+}
+
+/* Email */
+.contato-email {
+    background: #fff;
+    color: var(--title);
+    border: 2px solid var(--primary);
+}
+
+.contato-email:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* Instagram */
+.contato-instagram {
+    background: #fff;
+    color: var(--title);
+    border: 2px solid var(--secondary);
+}
+
+.contato-instagram:hover {
+    background: var(--secondary);
+    color: var(--title);
+}
+
+/* ================= FOOTER ================= */
+
+.rodape {
+    background: var(--title);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 24px 20px;
+    font-size: 0.85rem;
+}
+
+.rodape p {
+    margin: 4px 0;
+}
+
+.assinatura {
+    font-size: 0.78rem;
+    margin-top: 6px !important;
+}
+
+.assinatura a {
+    color: var(--primary);
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.assinatura a:hover {
+    color: #fff;
+}
+
+/* Responsivo contato */
+@media (max-width: 576px) {
+    .contato-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
